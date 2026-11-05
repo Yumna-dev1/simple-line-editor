@@ -1,0 +1,64 @@
+PAPER DESIGN — SIMPLE LINE EDITOR IN C
+
+1. DATA STRUCTURE
+Use a dynamic array of strings.
+
+typedef struct {
+    char **lines;
+    int count;
+    int capacity;
+} Document;
+
+- lines: stores the address of each line.
+- count: number of lines currently stored.
+- capacity: number of lines the array can currently hold.
+
+Reason: A dynamic array allows lines to be accessed by line number. It can also grow using realloc() when full. Inserting or deleting requires shifting elements, which is acceptable for a small document.
+
+2. COMMANDS
+insert <line number> <text>
+delete <line number>
+display
+save <filename>
+load <filename>
+search <word or phrase>
+count
+help
+quit
+
+3. CORE LOGIC (PSEUDOCODE)
+
+INSERT(lineNumber, text)
+1. Check that lineNumber is between 1 and count + 1.
+2. If the array is full, double its capacity using realloc().
+3. Shift lines from the end towards lineNumber one position right.
+4. Allocate memory for the new text and copy it into the empty position.
+5. Increase count.
+
+DELETE(lineNumber)
+1. Check that lineNumber is between 1 and count.
+2. Free the memory used by that line.
+3. Shift all following lines one position left.
+4. Decrease count.
+
+DISPLAY()
+1. If count is zero, print that the document is empty.
+2. Otherwise print each line with its line number.
+
+4. EDGE CASES
+- Insert into an empty document: only line number 1 is valid.
+- Insert at the end: use count + 1.
+- Delete from an empty document: show an error message.
+- Delete an invalid line number: show an error message.
+- Display an empty document: show an appropriate message.
+
+5. FUNCTION PLAN
+initializeDocument() — create the initial array.
+ensureCapacity() — increase array size when full.
+insertLine() — insert a line.
+deleteLine() — delete a line.
+displayDocument() — print the document.
+saveDocument() / loadDocument() — file handling.
+searchDocument() — search text.
+showWordCount() — count words and lines.
+freeDocument() — release allocated memory.
